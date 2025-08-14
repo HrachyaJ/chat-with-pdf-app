@@ -16,7 +16,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Ollama, OllamaEmbeddings } from "@langchain/ollama";
 
 const model = new Ollama({
-  baseUrl: "http://localhost:11434", // default Ollama URL
+  baseUrl: "https://hrachyaj-ollama-chat-api.hf.space", // default Ollama URL
   model: "llama3.2:1b", // or llama3, mistral, etc.
   numCtx: 4096,
   // Reduce number of threads if you have limited CPU cores
@@ -33,7 +33,7 @@ const model = new Ollama({
 
 const embeddings = new OllamaEmbeddings({
   model: "mxbai-embed-large", // This one is working fine
-  baseUrl: "http://localhost:11434"
+  baseUrl: "https://hrachyaj-ollama-chat-api.hf.space",
 });
 
 export const indexName = "luminous-juniper";
