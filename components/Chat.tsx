@@ -1,15 +1,14 @@
-'use client';
+"use client";
 
 import { FormEvent, useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, Send, Sparkles } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import { useUser } from "@clerk/nextjs";
-import { createBrowserClient } from '@supabase/ssr';
+import { createBrowserClient } from "@supabase/ssr";
 import { askQuestion } from "@/actions/askQuestion";
-import { useToast } from "@/components/ui/use-toast"
-// import { ChatMessage } from "@langchain/core/messages";
+import { useToast } from "@/components/ui/use-toast";
 
 export type Message = {
   id?: string;
@@ -35,8 +34,7 @@ type PostgrestError = {
 
 function Chat({ id }: { id: string }) {
   const { user } = useUser();
-  const { toast } = useToast()
-  // const supabase = createClientComponentClient();
+  const { toast } = useToast();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isPending, startTransition] = useTransition();
@@ -49,21 +47,22 @@ function Chat({ id }: { id: string }) {
     bottomOfChatRef.current?.scrollIntoView({
       behavior: "smooth",
     });
-  }, [messages])
+  }, [messages]);
 
   useEffect(() => {
     const fetchMessages = async () => {
       setLoading(true);
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
+      const supabaseAnonKey = process.env
+        .NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
       const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
 
       const { data, error } = await supabase
-        .from('chat_messages')
-        .select('*')
-        .eq('user_id', user?.id)
-        .eq('file_id', id)
-        .order('created_at', { ascending: true });
+        .from("chat_messages")
+        .select("*")
+        .eq("user_id", user?.id)
+        .eq("file_id", id)
+        .order("created_at", { ascending: true });
 
       setSnapshot(data);
       setError(error);
@@ -79,7 +78,7 @@ function Chat({ id }: { id: string }) {
     if (!snapshot) return;
 
     console.log("Updated snapshot", snapshot);
-    
+
     // Check if the last message in current messages is "Thinking..."
     const lastMessage = messages[messages.length - 1];
     if (lastMessage?.role === "ai" && lastMessage.message === "Thinking...") {
@@ -101,110 +100,171 @@ function Chat({ id }: { id: string }) {
   }, [snapshot]);
 
   const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const q = input;
-  setInput("");
+    const q = input;
+    setInput("");
 
-  // Optimistic UI update
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "human",
-      message: q,
-      createdAt: new Date(),
-    },
-    {
-      role: "ai",
-      message: "Thinking...",
-      createdAt: new Date(),
-    },
-  ]);
+    // Optimistic UI update
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "human",
+        message: q,
+        createdAt: new Date(),
+      },
+      {
+        role: "ai",
+        message: "Thinking...",
+        createdAt: new Date(),
+      },
+    ]);
 
-  startTransition(async () => {
-    const { success, message, aiResponse } = await askQuestion(id, q);
+    startTransition(async () => {
+      const { success, message, aiResponse } = await askQuestion(id, q);
 
-    if (!success) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: message,
-      })
-      
-      setMessages((prev) =>
-        prev.slice(0, prev.length - 1).concat([
-          {
-            role: "ai",
-            message: `Whoops... ${message}`,
-            createdAt: new Date(),
-          },
-        ])
-      );
-    } else {
-      // 🔥 CRITICAL: Handle success case - replace "Thinking..." with actual response
-      setMessages((prev) =>
-        prev.slice(0, prev.length - 1).concat([
-          {
-            role: "ai",
-            message: aiResponse || "Response generated successfully",
-            createdAt: new Date(),
-          },
-        ])
-      );
-    }
-  });
-};
+      if (!success) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: message,
+        });
+
+        setMessages((prev) =>
+          prev.slice(0, prev.length - 1).concat([
+            {
+              role: "ai",
+              message: `Whoops... ${message}`,
+              createdAt: new Date(),
+            },
+          ])
+        );
+      } else {
+        setMessages((prev) =>
+          prev.slice(0, prev.length - 1).concat([
+            {
+              role: "ai",
+              message: aiResponse || "Response generated successfully",
+              createdAt: new Date(),
+            },
+          ])
+        );
+      }
+    });
+  };
 
   return (
-    <div className="flex flex-col h-full overflow-scroll">
-      {/* Chat content */}
-      <div className="flex-1 w-full">
-                
-        {loading ? (
-          <div className="flex items-center justify-center">
-            <Loader2Icon className="animate-spin h-20 w-20 text-indigo-600 mt-20" />
+    <div className="flex flex-col h-full bg-gradient-to-b from-gray-50 to-white">
+      {/* Chat Header */}
+      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 p-2 shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+            <Sparkles className="h-5 w-5 text-white" />
           </div>
-        ): (
           <div>
-            {messages.length === 0 && (
-              <ChatMessage
-                key={"placeholder"}
-                message={{
-                  role: "ai",
-                  message: "Ask me anything about the document!",
-                  createdAt: new Date(),
-                }}
-              />
-            )}
+            <h3 className="text-white font-semibold text-[18px]">
+              AI Assistant
+            </h3>
+            <p className="text-white/80 text-[14px]">
+              Ready to help with your document
+            </p>
+          </div>
         </div>
-        )}
-
-        {messages.map((message, index) => (
-          <ChatMessage key={index} message={message} />
-        ))}
-
-        <div ref={bottomOfChatRef}/>
       </div>
 
-      <form
-        onSubmit={handleSubmit}  
-        className="flex sticky bottom-0 space-x-2 p-5 bg-indigo-600/75"    
-      >
-        <Input
-          placeholder="Ask a Question..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="bg-white"
-        />
+      {/* Chat content */}
+      <div className="flex-1 w-full overflow-y-auto px-4 py-6">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center h-64">
+            <div className="relative">
+              <div className="h-20 w-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center animate-pulse">
+                <Sparkles className="h-8 w-8 text-white" />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-xl opacity-30 animate-ping"></div>
+            </div>
+            <p className="text-gray-600 mt-4 font-medium">
+              Loading your conversations...
+            </p>
+          </div>
+        ) : (
+          <div className="max-w-4xl mx-auto">
+            {messages.length === 0 && (
+              <div className="pb-12">
+                <ChatMessage
+                  key={"placeholder"}
+                  message={{
+                    role: "ai",
+                    message:
+                      "👋 Hello! I'm your AI assistant. Ask me anything about your document and I'll help you find the information you need instantly!",
+                    createdAt: new Date(),
+                  }}
+                />
+              </div>
+            )}
 
-        <Button className="cursor-pointer" type="submit" disabled={!input || isPending}>
-          {isPending ? (
-            <Loader2Icon className="animate-spin text-indigo-600" />
-          ) : (
-            "Ask"
-          )}
-        </Button>
-      </form>
+            {messages.map((message, index) => (
+              <ChatMessage key={index} message={message} />
+            ))}
+          </div>
+        )}
+
+        <div ref={bottomOfChatRef} />
+      </div>
+
+      {/* Chat Input */}
+      <div className="border-t border-gray-200 bg-white/80 backdrop-blur-sm">
+        <form onSubmit={handleSubmit} className="p-4 max-w-4xl mx-auto">
+          <div className="relative flex items-center gap-3">
+            <div className="relative flex-1">
+              <Input
+                placeholder="Ask me anything about your document..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="pr-12 bg-white border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-xl shadow-sm text-gray-800 placeholder-gray-500"
+                disabled={isPending}
+              />
+              {input && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+                </div>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              disabled={!input || isPending}
+              className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg hover:shadow-purple-500/25 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {isPending ? (
+                <div className="flex items-center gap-2">
+                  <Loader2Icon className="animate-spin h-4 w-4" />
+                  <span>Thinking...</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Send className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                  <span>Ask</span>
+                </div>
+              )}
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+            <span className="flex items-center gap-1">
+              <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+              AI-powered responses
+            </span>
+            <span className="flex items-center gap-1">
+              <div className="h-2 w-2 bg-blue-400 rounded-full animate-pulse"></div>
+              Instant document analysis
+            </span>
+            <span className="flex items-center gap-1">
+              <div className="h-2 w-2 bg-purple-400 rounded-full animate-pulse"></div>
+              Context-aware answers
+            </span>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
