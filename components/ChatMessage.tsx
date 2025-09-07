@@ -1,7 +1,7 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { BotIcon, Loader2Icon, Sparkles, User } from "lucide-react";
+import { Loader2Icon, Sparkles, User } from "lucide-react";
 import Markdown from "react-markdown";
 import { Message } from "./Chat";
 
@@ -103,12 +103,10 @@ function ChatMessage({ message }: { message: Message }) {
                       <li className="leading-relaxed">{children}</li>
                     ),
                     code: (props) => {
-                      const { inline, className, children, ...rest } =
-                        props as {
-                          inline?: boolean;
-                          className?: string;
-                          children?: React.ReactNode;
-                        };
+                      const { inline, children, ...rest } = props as {
+                        inline?: boolean;
+                        children?: React.ReactNode;
+                      };
                       if (inline) {
                         return (
                           <code

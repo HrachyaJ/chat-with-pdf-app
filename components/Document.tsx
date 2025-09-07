@@ -4,13 +4,7 @@ import { useRouter } from "next/navigation";
 import byteSize from "byte-size";
 import { useTransition } from "react";
 import useSubscription from "@/hooks/useSubscription";
-import {
-  DownloadCloud,
-  Trash2Icon,
-  FileText,
-  Crown,
-  MoreVertical,
-} from "lucide-react";
+import { DownloadCloud, Trash2Icon, FileText, Crown } from "lucide-react";
 import { Button } from "./ui/button";
 import { deleteDocument } from "@/actions/deleteDocument";
 

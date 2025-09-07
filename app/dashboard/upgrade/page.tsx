@@ -2,14 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
-import {
-  CheckIcon,
-  Sparkles,
-  Star,
-  Zap,
-  Crown,
-  ArrowRight,
-} from "lucide-react";
+import { CheckIcon, Sparkles, Zap, Crown, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import useSubscription from "@/hooks/useSubscription";
 import { useTransition } from "react";
@@ -69,9 +62,9 @@ const Pricing = () => {
             Supercharge your Document Companion
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Choose an affordable plan that's packed with the best features for
-            interacting with your PDFs, enhancing productivity, and streamlining
-            your workflow
+            Choose an affordable plan that&apos;s packed with the best features
+            for interacting with your PDFs, enhancing productivity, and
+            streamlining your workflow
           </p>
         </div>
 

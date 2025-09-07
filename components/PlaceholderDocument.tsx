@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  FrownIcon,
-  PlusCircleIcon,
-  Loader2,
-  Sparkles,
-  Crown,
-  Upload,
-} from "lucide-react";
-import { Button } from "./ui/button";
+import { Loader2, Sparkles, Crown, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import useSubscription from "@/hooks/useSubscription";
 import { useState } from "react";

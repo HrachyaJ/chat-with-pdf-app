@@ -151,7 +151,8 @@ function FileUploader() {
                     {statusConfig[status as StatusText].message}
                   </h3>
                   <p className="text-gray-600">
-                    This may take a few moments, please don't close this page
+                    This may take a few moments, please don&apos;t close this
+                    page
                   </p>
                 </div>
               )}
@@ -225,7 +226,7 @@ function FileUploader() {
                           Upgrade Required
                         </h3>
                         <p className="text-orange-600">
-                          You've reached your file upload limit
+                          You&apos;ve reached your file upload limit
                         </p>
                         <div className="space-y-2 text-sm text-orange-600">
                           <div className="flex items-center justify-center gap-2">

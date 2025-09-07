@@ -221,7 +221,8 @@ export default function Home() {
                   <span className="font-semibold">AI Response</span>
                 </div>
                 <p className="text-white/90 text-sm">
-                  "The key findings show a 40% improvement in efficiency..."
+                  &quot;The key findings show a 40% improvement in
+                  efficiency...&quot;
                 </p>
               </div>
 
@@ -231,7 +232,8 @@ export default function Home() {
                   <span className="font-semibold">Your Question</span>
                 </div>
                 <p className="text-white/90 text-sm">
-                  "What are the main conclusions of this research paper?"
+                  &quot;What are the main conclusions of this research
+                  paper?&quot;
                 </p>
               </div>
 
@@ -240,7 +242,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-600/20"></div>
                 <div className="relative aspect-[4/3]">
                   <Image
-                    src="https://imgur.com/VciRSTI.jpeg"
+                    src="/hero-demo.png"
                     alt="Chat with PDF AI Interface"
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
@@ -299,7 +301,7 @@ export default function Home() {
               The Problem
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              You're Wasting{" "}
+              You&apos;re Wasting{" "}
               <span className="text-red-600">15+ Hours Weekly</span> Reading
               PDFs Manually
             </h2>
@@ -452,7 +454,7 @@ export default function Home() {
                     ))}
                   </div>
                   <blockquote className="text-gray-700 mb-6 leading-relaxed italic">
-                    "{testimonial.content}"
+                    &quot;{testimonial.content}&quot;
                   </blockquote>
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
@@ -494,8 +496,8 @@ export default function Home() {
           </h2>
 
           <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-            Join thousands who've transformed their document workflow. Start
-            free, see results immediately.
+            Join thousands who&apos;ve transformed their document workflow.
+            Start free, see results immediately.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
