@@ -57,7 +57,7 @@ function Chat({ id }: { id: string }) {
         setError({ message: message || "Failed to fetch messages", details: "", hint: "", code: "" });
         setSnapshot([]);
       } else {
-        setSnapshot(data as any);
+        setSnapshot(data as DatabaseMessage[]);
       }
       setLoading(false);
     };
