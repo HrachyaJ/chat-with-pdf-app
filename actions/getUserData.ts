@@ -93,3 +93,4 @@ export async function getUserFilesCount() {
     return { error: "An unexpected error occurred" };
   }
 }
+

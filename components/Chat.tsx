@@ -6,9 +6,9 @@ import { Input } from "./ui/input";
 import { Loader2Icon, Send, Sparkles } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import { useUser } from "@clerk/nextjs";
-import { createBrowserClient } from "@supabase/ssr";
 import { askQuestion } from "@/actions/askQuestion";
 import { useToast } from "@/components/ui/use-toast";
+import { getChatMessages } from "@/actions/getChatMessages";
 
 export type Message = {
   id?: string;
@@ -52,20 +52,13 @@ function Chat({ id }: { id: string }) {
   useEffect(() => {
     const fetchMessages = async () => {
       setLoading(true);
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-      const supabaseAnonKey = process.env
-        .NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
-      const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
-
-      const { data, error } = await supabase
-        .from("chat_messages")
-        .select("*")
-        .eq("user_id", user?.id)
-        .eq("file_id", id)
-        .order("created_at", { ascending: true });
-
-      setSnapshot(data);
-      setError(error);
+      const { success, data, message } = await getChatMessages(id);
+      if (!success) {
+        setError({ message: message || "Failed to fetch messages", details: "", hint: "", code: "" });
+        setSnapshot([]);
+      } else {
+        setSnapshot(data as any);
+      }
       setLoading(false);
     };
 
