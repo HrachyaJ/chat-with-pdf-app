@@ -1,8 +1,8 @@
-'use server'
+"use server";
 
 import { UserDetails } from "@/app/dashboard/upgrade/page";
 import { auth } from "@clerk/nextjs/server";
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 import stripe from "@/lib/stripe";
 import getBaseUrl from "@/lib/getBaseUrl";
 
@@ -15,21 +15,22 @@ const supabase = createClient(
 export async function createCheckoutSession(userDetails: UserDetails) {
   const { userId } = await auth();
 
-  if(!userId) {
+  if (!userId) {
     throw new Error("User not found");
   }
-  
+
   // first check if the user already has a stripeCustomerId
   let stripeCustomerId;
 
   const { data: user, error } = await supabase
-    .from('users')
-    .select('stripe_customer_id')
-    .eq('clerk_user_id', userId)
+    .from("users")
+    .select("stripe_customer_id")
+    .eq("clerk_user_id", userId)
     .single();
 
   // If user doesn't exist, we'll create them later
-  if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+  if (error && error.code !== "PGRST116") {
+    // PGRST116 = no rows returned
     throw new Error(`Failed to fetch user: ${error.message}`);
   }
 
@@ -47,33 +48,33 @@ export async function createCheckoutSession(userDetails: UserDetails) {
 
     // Check if a user record exists but without clerk_user_id set
     const { data: existingUser, error: existingError } = await supabase
-      .from('users')
-      .select('id')
-      .is('clerk_user_id', null)
+      .from("users")
+      .select("id")
+      .is("clerk_user_id", null)
       .limit(1)
       .single();
 
     if (existingUser && !existingError) {
       // Update the existing user record
       const { error: updateError } = await supabase
-        .from('users')
-        .update({ 
+        .from("users")
+        .update({
           clerk_user_id: userId,
-          stripe_customer_id: customer.id 
+          stripe_customer_id: customer.id,
         })
-        .eq('id', existingUser.id);
+        .eq("id", existingUser.id);
 
       if (updateError) {
-        throw new Error(`Failed to update existing user: ${updateError.message}`);
+        throw new Error(
+          `Failed to update existing user: ${updateError.message}`
+        );
       }
     } else {
       // Create a new user record
-      const { error: insertError } = await supabase
-        .from('users')
-        .insert({
-          clerk_user_id: userId,
-          stripe_customer_id: customer.id,
-        });
+      const { error: insertError } = await supabase.from("users").insert({
+        clerk_user_id: userId,
+        stripe_customer_id: customer.id,
+      });
 
       if (insertError) {
         throw new Error(`Failed to create user record: ${insertError.message}`);
@@ -89,7 +90,7 @@ export async function createCheckoutSession(userDetails: UserDetails) {
       {
         price: "price_1RbOAi03bGLKQMpvs8lrSyFt",
         quantity: 1,
-      }
+      },
     ],
     mode: "subscription",
     customer: stripeCustomerId,
@@ -98,4 +99,4 @@ export async function createCheckoutSession(userDetails: UserDetails) {
   });
 
   return session.id;
-};
+}

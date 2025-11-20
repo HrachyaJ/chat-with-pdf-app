@@ -3,7 +3,7 @@ import stripe from "@/lib/stripe";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -21,9 +21,9 @@ export async function POST(req: NextRequest) {
   }
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    console.log("Stripe webhook secret was not set.")
+    console.log("Stripe webhook secret was not set.");
     return new NextResponse("Stripe webhook secret is not set", {
-      status: 400
+      status: 400,
     });
   }
 
@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET,
-    )
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
   } catch (err) {
     console.log(`Webhook Error: ${err}`);
     return new NextResponse(`Webhook Error: ${err}`, { status: 400 });
@@ -42,9 +42,9 @@ export async function POST(req: NextRequest) {
 
   const getUserDetails = async (customerId: string) => {
     const { data: user, error } = await supabase
-      .from('users')
-      .select('id, clerk_user_id')
-      .eq('stripe_customer_id', customerId)
+      .from("users")
+      .select("id, clerk_user_id")
+      .eq("stripe_customer_id", customerId)
       .single();
 
     if (error) {
@@ -60,20 +60,22 @@ export async function POST(req: NextRequest) {
     case "payment_intent.succeeded": {
       const invoice = event.data.object;
       const customerId = invoice.customer as string;
-      
+
       const userDetails = await getUserDetails(customerId);
       if (!userDetails?.id) {
-        return new NextResponse("User not found", { status: 404 })        
+        return new NextResponse("User not found", { status: 404 });
       }
 
       const { error } = await supabase
-        .from('users')
-        .update({ active_membership : true })
-        .eq('id', userDetails.id);
+        .from("users")
+        .update({ active_membership: true })
+        .eq("id", userDetails.id);
 
       if (error) {
         console.log(`Error updating user membership: ${error.message}`);
-        return new NextResponse("Failed to update user membership", { status: 500 });
+        return new NextResponse("Failed to update user membership", {
+          status: 500,
+        });
       }
 
       break;
@@ -85,25 +87,27 @@ export async function POST(req: NextRequest) {
 
       const userDetails = await getUserDetails(customerId);
       if (!userDetails?.id) {
-        return new NextResponse("User not found", { status: 404 })        
+        return new NextResponse("User not found", { status: 404 });
       }
 
       const { error } = await supabase
-        .from('users')
+        .from("users")
         .update({ active_membership: false })
-        .eq('id', userDetails.id);
+        .eq("id", userDetails.id);
 
       if (error) {
         console.log(`Error updating user membership: ${error.message}`);
-        return new NextResponse("Failed to update user membership", { status: 500 });
+        return new NextResponse("Failed to update user membership", {
+          status: 500,
+        });
       }
 
       break;
     }
 
     default:
-      console.log(`Unhandled event type ${event.type}`)
+      console.log(`Unhandled event type ${event.type}`);
   }
 
-  return NextResponse.json({message: "Webhook received"});
+  return NextResponse.json({ message: "Webhook received" });
 }

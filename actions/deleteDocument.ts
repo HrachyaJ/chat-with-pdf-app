@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
-import { indexName } from '@/lib/langchain';
-import pineconeClient from '@/lib/pinecone';
-import { auth } from '@clerk/nextjs/server';
-import { revalidatePath } from 'next/cache';
-import { createClient } from '@supabase/supabase-js';
+import { indexName } from "@/lib/langchain";
+import pineconeClient from "@/lib/pinecone";
+import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -18,23 +18,24 @@ export async function deleteDocument(docId: string) {
 
   // 1. Delete the file record from Supabase 'uploads' table (assuming that's your files table)
   const { error: deleteError } = await supabase
-    .from('uploads')
+    .from("uploads")
     .delete()
-    .eq('id', docId)
-    .eq('user_id', userId);
+    .eq("id", docId)
+    .eq("user_id", userId);
 
   if (deleteError) {
     throw new Error(`Failed to delete document record: ${deleteError.message}`);
   }
 
   // 2. Delete the file from Supabase Storage
-  const { error: storageError } = await supabase
-    .storage
+  const { error: storageError } = await supabase.storage
     .from(process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME!)
     .remove([`users/${userId}/files/${docId}`]);
 
   if (storageError) {
-    throw new Error(`Failed to delete file from storage: ${storageError.message}`);
+    throw new Error(
+      `Failed to delete file from storage: ${storageError.message}`
+    );
   }
 
   // 3. Delete from Pinecone index

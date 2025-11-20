@@ -1,7 +1,7 @@
-'use server'
+"use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase client with service role key
 const supabase = createClient(
@@ -33,12 +33,12 @@ export async function getUserData() {
     if (!userData) {
       console.log("No user record found, creating one with default values...");
       const { data: newUser, error: createError } = await supabase
-        .from('users')
+        .from("users")
         .insert({
           clerk_user_id: userId,
-          active_membership: false
+          active_membership: false,
         })
-        .select('active_membership')
+        .select("active_membership")
         .single();
 
       if (createError) {
@@ -46,21 +46,20 @@ export async function getUserData() {
         return { error: createError.message };
       }
 
-      return { 
-        data: { 
+      return {
+        data: {
           hasActiveMembership: !!newUser?.active_membership,
-          userData: newUser 
-        } 
+          userData: newUser,
+        },
       };
     }
 
-    return { 
-      data: { 
+    return {
+      data: {
         hasActiveMembership: !!userData?.active_membership,
-        userData 
-      } 
+        userData,
+      },
     };
-
   } catch (error) {
     console.error("Unexpected error:", error);
     return { error: "An unexpected error occurred" };
@@ -87,10 +86,8 @@ export async function getUserFilesCount() {
     }
 
     return { data: { filesCount: count || 0 } };
-
   } catch (error) {
     console.error("Unexpected error counting files:", error);
     return { error: "An unexpected error occurred" };
   }
 }
-
